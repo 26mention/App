@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Form</title>
+</head>
+<body>
+    <form id="productForm" action="YOUR_DEPLOY_CODE" method="POST">
+        <label for="productName">Product Name:</label>
+        <input type="text" id="productName" name="productName" required><br><br>
+
+        <label for="productImage">Product Image:</label>
+        <input type="file" id="productImage" name="productImage" required><br><br>
+
+        <label for="productPrice">Product Price:</label>
+        <input type="text" id="productPrice" name="productPrice" required><br><br>
+
+        <label for="productType">Product Type:</label>
+        <input type="text" id="productType" name="productType" required><br><br>
+
+        <label for="productAbout">About Product:</label>
+        <textarea id="productAbout" name="productAbout" required></textarea><br><br>
+
+        <label for="uploadImage1">Upload Image 1:</label>
+        <input type="file" id="uploadImage1" name="uploadImage1" required><br><br>
+
+        <label for="uploadImage2">Upload Image 2:</label>
+        <input type="file" id="uploadImage2" name="uploadImage2" required><br><br>
+
+        <label for="uploadImage3">Upload Image 3:</label>
+        <input type="file" id="uploadImage3" name="uploadImage3" required><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById('productForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append('productName', document.getElementById('productName').value);
+            formData.append('productPrice', document.getElementById('productPrice').value);
+            formData.append('productType', document.getElementById('productType').value);
+            formData.append('productAbout', document.getElementById('productAbout').value);
+
+            const imageFiles = [
+                document.getElementById('productImage').files[0],
+                document.getElementById('uploadImage1').files[0],
+                document.getElementById('uploadImage2').files[0],
+                document.getElementById('uploadImage3').files[0]
+            ];
+
+            const imgbbApiKey = '656216fe38dc35e75f949dbd93bdcd20';
+            const uploadPromises = imageFiles.map(file => uploadToImgbb(file, imgbbApiKey));
+            const imageUrls = await Promise.all(uploadPromises);
+
+            formData.append('productImage', imageUrls[0]);
+            formData.append('uploadImage1', imageUrls[1]);
+            formData.append('uploadImage2', imageUrls[2]);
+            formData.append('uploadImage3', imageUrls[3]);
+
+            fetch('https://script.google.com/macros/s/AKfycbzqwFJf5r9TSP-uuq2xn-O--2Eyvi_xqds6zQKuvhedpBO46z2j5XXpHxhr4R0zVfw7/exec', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json())
+              .then(data => {
+                  alert('Form submitted successfully');
+                  console.log(data);
+              }).catch(error => {
+                  alert('Error submitting form');
+                  console.error(error);
+              });
+        });
+
+        async function uploadToImgbb(file, apiKey) {
+            const formData = new FormData();
+            formData.append('image', file);
+            const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            return data.data.url;
+        }
+    </script>
+</body>
+</html>

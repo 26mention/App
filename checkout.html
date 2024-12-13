@@ -1,0 +1,186 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+<link rel="stylesheet" type="text/css" href="style.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap');
+  * { margin: 0; padding: 0; overflow-x: hidden; }
+  body { font-family: "Rat Hat Display", sans-serif; }
+  .header { display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #000; }
+  h2{ font-weight: 400; }
+  .checkOut{ margin: 10px; }
+  .payment-option{ margin-top: 10px; font-size: 18px; }
+  input[type=file]::file-selector-button { padding: 8px 26px; color: #fff; background: grey; cursor: pointer; margin-top: 10px; border: none; }
+  #placeOrderButton{ padding: 8px 26px; color: #fff; background: #000; cursor: pointer; margin-top: 10px; }
+  #qrCode{ margin-top: 10px; }
+  .alertBox { display: none; position: fixed; top: 20px ;left: 50%; transform: translateX(-50%); background-color: #000; color: #fff;padding: 10px 20px; border-radius: 5px; font-size: 16px; width: 80%;z-index: 1000; text-align: center;}
+</style>
+<div class="header">
+    <img src="https://i.ibb.co/qpJWqnp/icon.png">
+</div>
+<div class="checkOut">
+<h2>CheckOut Page</h2>
+<p>Select Payment Method:</p>
+<div class="payment-option">
+    <input type="radio" id="payOnline" name="paymentMethod" value="Online" onclick="handlePaymentSelection()">
+    <label for="payOnline">Pay Online</label>
+</div>
+<div class="payment-option">
+    <input type="radio" id="payCod" name="paymentMethod" value="Cash on Delivery" onclick="handlePaymentSelection()">
+    <label for="payCod">Cash</label>
+</div>
+<canvas id="qrCode"></canvas>
+<div id="uploadSection">
+    <h3>Upload Payment Screenshot</h3>
+    <input type="file" id="screenshotInput" accept="image/*" required />
+</div>
+<button id="placeOrderButton" onclick="placeOrder()">Place Order</button>
+</div>
+<div id="loader" style="display:none;">
+</div>
+<div class="alertBox" id="alertBox"></div>
+<script>
+    let cart = [];
+    let totalAmount = 0;
+    let screenshotUrl = '';
+
+    const loadCart = () => {
+        const savedCart = localStorage.getItem('cart');
+        if (savedCart) {
+            cart = JSON.parse(savedCart);
+        }
+        calculateTotal();
+        updateCart();
+    };
+
+    const calculateTotal = () => {
+        totalAmount = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    };
+
+    const updateCart = () => {
+        const cartItems = document.getElementById('cartItems');
+        cartItems.innerHTML = '';
+        cart.forEach((item) => {
+            const li = document.createElement('li');
+            li.textContent = `${item.name} - ₹${item.price} x ${item.quantity}`;
+            cartItems.appendChild(li);
+        });
+    };
+
+    const handlePaymentSelection = () => {
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+        if (paymentMethod === 'Online') {
+            showQrCode();
+            showUploadSection();
+            showPlaceOrderButton();
+        } else if (paymentMethod === 'Cash on Delivery') {
+            hideQrCode();
+            hideUploadSection();
+            showPlaceOrderButton();
+        }
+    };
+
+    const showQrCode = () => {
+        const upiId = 'createprincemahto-2@okaxis';
+        const amount = totalAmount;
+        const upiUrl = `upi://pay?pa=${upiId}&pn=26%20Mention&am=${amount}&cu=INR`;
+
+        const qr = new QRious({
+            element: document.getElementById('qrCode'),
+            value: upiUrl,
+            size: 200
+        });
+
+        document.getElementById('qrCode').style.display = 'block';
+    };
+
+    const hideQrCode = () => {
+        document.getElementById('qrCode').style.display = 'none';
+    };
+
+    const showUploadSection = () => {
+        document.getElementById('uploadSection').style.display = 'block';
+    };
+
+    const hideUploadSection = () => {
+        document.getElementById('uploadSection').style.display = 'none';
+    };
+
+    const showPlaceOrderButton = () => {
+        document.getElementById('placeOrderButton').style.display = 'block';
+    };
+
+    const showAlert = (message) => {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.textContent = message;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 6000); 
+    };
+
+    const placeOrder = async () => {
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+        document.getElementById('loader').style.display = 'block';
+
+        const input = document.getElementById('screenshotInput');
+        const file = input.files[0];
+
+        if (paymentMethod === 'Online' && !file) {
+            showAlert('Please upload a screenshot of your payment.');
+            document.getElementById('loader').style.display = 'none';
+            return;
+        }
+
+        if (file) {
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=b14aa49f0d04da769879e5fb1f8c57c5`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    screenshotUrl = data.data.url;
+                } else {
+                    showAlert('Failed to upload screenshot: ' + data.message);
+                    document.getElementById('loader').style.display = 'none';
+                    return;
+                }
+            } catch (error) {
+                showAlert('Error uploading file: ' + error.message);
+                document.getElementById('loader').style.display = 'none';
+                return;
+            }
+        }
+
+        try {
+            const response = await fetch('https://script.google.com/macros/s/AKfycbw6ecyLzof9rN2YvsAlwz-t0xt1ZtJyMCEQ8i4xK1VmODexvcyIsjjnG6bcYztJm1JTEw/exec', {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'placeOrder',
+                    cart,
+                    username: localStorage.getItem('sdsUsername'),
+                    paymentMethod,
+                    screenshotUrl
+                })
+            });
+            const data = await response.json();
+            if (data.success) {
+                showAlert('Order placed successfully!');
+                localStorage.removeItem('cart');
+                setTimeout(() => window.location.href = "index.html", 6000);
+            } else {
+                showAlert('Failed to place order. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error placing order:', error);
+            showAlert('There was an error placing your order. Please try again.');
+        } finally {
+            document.getElementById('loader').style.display = 'none';
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', loadCart);
+</script>

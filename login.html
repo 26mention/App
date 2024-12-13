@@ -1,0 +1,60 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap');
+    *{ margin: 0; padding: 0; overflow-x: hidden; }
+    body{ font-family: "Rat Hat Display", sans-serif; }
+    .header{ display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #000; }
+    #popup{ padding: 15px; border: 1px solid #e1e1e1; margin: 10px; }
+    h2{ font-size: 20px; margin: 10px; }
+    input{ width: 100%; padding: 9px 16px; background: #fff; border: 1px solid #e1e1e1; min-height: 42px; font-size: 15px; line-height: 22px; margin-bottom: 10px; color: #444; }
+    label{ color: #1a1a1a; }
+    .log-btn{ padding: 10px 26px; color: #fff; background: #000; cursor: pointer; }
+    form p { margin-top: 10px; color: #666; }
+    form a { color: #666; text-decoration: none; }
+</style>
+<div class="header">
+    <img src="https://i.ibb.co/qpJWqnp/icon.png">
+</div>
+<h2>LOG IN TO YOUR ACCOUNT</h2>
+<div id="popup">
+    <form onsubmit="login(event)">
+        <label>Username: </label>
+        <input type="text" id="username" class="log-int" required>
+        <label>Password</label>
+        <input type="password" id="password" class="log-int" required>
+        <button type="submit" class="log-btn">Login</button>
+        <p>No Account? <a href="signup.html">Create One</a></p>
+        <p id="popupMessage"></p>
+    </form>
+</div>
+
+<script>
+    async function login(event) {
+        event.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        const response = await fetch('https://script.google.com/macros/s/AKfycbwdsbertJ_pJAplfmz_40zqNZdILZiLvW7YegKPMRFqX6j5kZQmV8oPx1JO-YNkUqkOsQ/exec', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                username: username,
+                password: password
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            localStorage.setItem('sdsUsername', username);
+            localStorage.setItem('loggedIn', true);
+            console.log('Login successful!');
+            window.location.href = 'index.html';  
+        } else {
+            console.log('Invalid username or password.');
+        }
+    }
+</script>

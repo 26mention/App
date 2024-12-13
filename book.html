@@ -1,0 +1,114 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="style.css">
+<style>
+    *{
+        overflow-x: hidden;
+    }
+    .loader{
+        text-align: center;
+        margin-top: 85%;
+    }
+    .header{
+        border-bottom: 1px solid;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .product-container img{
+        width: 128px;
+        height: 128px;
+    }
+    .product-container{
+        display: flex;
+        align-items: center;
+        margin-left: 10px;
+        margin-right: 10px;
+        border-bottom: 2px solid;
+    }
+    .full-product{
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        left: 80px;
+    }
+    .product-name{
+        font-weight: 600;
+        font-size: 23px;
+        text-decoration: underline;
+        width: 158px;
+        text-underline-offset: 4px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow-x: hidden;
+    }
+    .product-mrp{
+        text-decoration: line-through;
+    }
+</style>
+<div class="header">
+    <img src="https://i.ibb.co/MgLvdj8/icon.png" class="icon-head">
+</div>
+<hr class="head-hr">
+<div class="loader">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+</div>
+<div id="books"></div>
+<script>
+    async function fetchProducts() {
+            const loader = document.querySelector('.loader');
+            loader.style.display = 'block'; // Show loader
+
+            try {
+                const response = await fetch("https://script.google.com/macros/s/AKfycbyXYtKLWA1dr21qJEmkl57rU-9PCIRI80sMLiFa7e0XUsB7d7y0szrW1aFgzGDorOH1pg/exec", {
+                    method: "POST"
+                });
+                const products = await response.json();
+                const productContainer = document.getElementById('books');
+                productContainer.innerHTML = ''; // Clear existing content
+
+                // Display each product
+                products.forEach(product => {
+                    const productElement = document.createElement('div');
+                    productElement.classList.add('product-container');
+
+                    productElement.innerHTML = `
+                        <img src="${product.imageUrl}" alt="${product.productName}" />
+                        <div class="full-product">
+                        <div class="product-name">${product.productName}</div>
+                        <div class="product-price">Price: ₹${product.price}</div>
+                        <div class="product-mrp">MRP: ₹${product.mrp}</div>
+                        </div>
+                    `;
+
+                    // Function to save product details to local storage and navigate to product.html
+                    const saveProductAndNavigate = () => {
+                        const currentProduct = {
+                            name: product.productName,
+                            imageUrl: product.imageUrl,
+                            price: product.price,
+                            mrp: product.mrp,
+                            additionalImages: product.additionalImages || [] // Assuming additionalImages is an array in product
+                        };
+                        localStorage.setItem('currentProduct', JSON.stringify(currentProduct));
+                        window.location.href = 'product.html';
+                    };
+
+                    // Add click event to product name and image to save data to local storage
+                    productElement.querySelector('.product-name').addEventListener('click', saveProductAndNavigate);
+                    productElement.querySelector('img').addEventListener('click', saveProductAndNavigate);
+
+                    productContainer.appendChild(productElement);
+                });
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                alert('Failed to load products. Please try again later.');
+            } finally {
+                loader.style.display = 'none'; // Hide loader
+            }
+        }
+
+        // Call the function to fetch and display products on page load
+        fetchProducts();
+</script>

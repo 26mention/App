@@ -1,0 +1,162 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Qwitcher+Grypen:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap');
+    a{ text-decoration: none; }
+    body { font-family: "Open Sans", sans-serif; }
+    * { margin: 0px; padding: 0px; overflow-x: hidden; }
+    .search-container { flex-direction: column; }
+    .header { display: flex; align-items: center; justify-content: center; background-color: #afafaf; padding: 10px; }
+    .header-body span, .menu-icon, button { cursor: pointer; }
+    .header p { font-size: 16px; align-items: center; display: flex; }
+    .header > p > button { margin-left: 10px; border-radius: 4px; border: none; padding: 6px; background: #8a2be2; color: #fff; font-weight: 500; }
+    .hidden, #blurBackground, #cartContainer, #placeOrderButton, #qrCode, #uploadSection { display: none; }
+    .side-menu { height: 100%; position: fixed; top: 0; left: 0; background-color: #efefef; overflow-y: auto; transition: 0.5s; padding-top: 60px; z-index: 1000; width: 0px; box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px; }
+    span, a, #loginLink { overflow: hidden; color: #000; }
+    .menu-icon { font-size: 22px; }
+    .search-container img { width: 168px; margin: 10px; }
+    .header-body { display: flex; align-items: center; padding: 20px; justify-content: space-evenly; }
+    #searchBox { padding: 10px; margin: 10px; width: 90%; padding-left: 30px; }
+    .search-wrapper button { display: flex; align-items: center; background: transparent; border: none; margin-left: 15px; margin-top: -42px; margin-bottom: 20px; }
+    #books , #copys , #disco { display: flex; padding: 40px; flex-direction: column; }
+    .books-labels { font-family: "Red Hat Display", sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 15px; margin: 10px; }
+    .product-container { display: flex; flex-direction: column; padding: 10px; background-color: #808080; align-items: center; }
+    .product-container img { width: 16pc; height: 265px; margin-bottom: 10px; }
+    .product-container button { padding: 6px; font-family: 'Red Hat Display'; background-color: #0c0b0b; border: none; color: #fff; font-weight: 500; margin-bottom: 10px; width: 80%; }
+    .navigation { display: flex; justify-content: center; }
+    #next-btn { margin-left: 20px; }
+    .navigation button { padding: 4px; border-radius: 25px; border: none; width: 50px; height: 50px; background-color: #c7c7c7; }
+    .navigation > button:disabled { background: #808080; }
+    #dataContainer { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+    .item { display: flex; width: 150px; flex-direction: column; margin: 0px 10px; align-items: center; background: #efefef; flex-wrap: wrap; }
+    #cartContainer { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: #fff; z-index: 1000; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); }
+    #cartItems { border-bottom: 1px solid #000; padding: 10px 0px; }
+    .cart-item { display: flex; margin-top: 10px; align-items: center; justify-content: center; }
+    .cart-item img { width: 50px; margin-right: 10px; margin-left: -4px; }
+    .cart-item p { width: 110px; overflow-x: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .btn-boy { margin-left: 4px; margin-right: 4px; padding: 1px; width: 13px; border: none; background: none; }
+    .btn-rmv { background: none; border: none; }
+    .btn-rmv span { color: #c50000; }
+    #nextButton, .close-btnb { padding: 4px; margin-top: 10px; width: 50px; border: none; background: transparent; }
+    #nextButton { border-bottom: 1px solid #008000; }
+    .close-btnb { border-bottom: 1px solid #ff0000; margin-left: 10px; }
+    .item img { width: 120px; height: 120px; }
+    .head-t { font-size: 16px; width: 140px; overflow-x: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .text-p { display: none; }
+    .item button { margin: 10px; padding: 4px; width: 120px; background: #000; color: #fff; }
+    .box-d { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .close-head { display: flex; align-items: center; justify-content: space-between; }
+    .close-btn { font-size: 34px; text-decoration: none; margin: 0px 0px 0px 80%; }
+    .close-head { margin-top: -60px; }
+    .arrow { transition: transform 0.3s ease; }
+    .arrow.expanded { transform: rotate(90deg); }
+    .links { display: none; margin-left: 20px; margin-top: 5px; }
+    .links a { display: block; color: #007BFF; text-decoration: none; margin-bottom: 5px; }
+    .links a:hover { text-decoration: underline; }
+    .section { cursor: pointer; display: flex; align-items: center; margin-bottom: 10px; }
+    .section span { margin-left: 10px; }
+    .particulars { padding: 10px; font-size: 18px; }
+    .particulars p { margin-bottom: 5px; }
+    .particulars h4 { margin-bottom: 10px; font-weight: 560; }
+    .gif-body{ display: flex; justify-content: center; flex-direction: column; padding: 10px; }
+    .gif-body img{ margin: 0px 0px 10px 0px; }
+</style>
+<div class="search-container">
+    <img src="https://i.ibb.co/qpJWqnp/icon.png">
+    <div class="search-wrapper">
+        <input type="text" id="searchBox" placeholder="Search for products">
+        <button onclick="searchProducts()">
+            <span class="material-symbols-outlined">search</span>
+        </button>
+    </div>
+    <div class="dataContainer">
+        <div id="dataContainer"></div>
+    </div>
+</div>
+<div class="header">
+    <p>Save Your Time By 10x <button>Shop Now!</button></p>
+</div>
+<div class="header-body">
+    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+    <div id="searchIcon" class="search-icon">
+        <span class="material-symbols-outlined">search</span>
+    </div>
+    <img src="https://i.ibb.co/qpJWqnp/icon.png">
+    <div id="loginLink">
+        <a href="login.html"><span class="material-symbols-outlined">login</span></a>
+    </div>
+    <div id="cart" onclick="toggleCart()">
+        <span class="material-symbols-outlined">shopping_bag</span>
+        <span id="cartCounter">0</span>
+    </div>
+</div>
+<div class="head-body">
+    <div id="side-menu" class="side-menu">
+        <div class="close-head">
+            <a class="close-btn" onclick="toggleMenu()">&times;</a>
+        </div>
+        <div class="particulars">
+            <h4>Section Menu: </h4>
+            <p onclick="toggleMenu()">Home</p>
+            <p><a href="copy.html">Copy</a></p>
+            <p><a href="about.html">About</a></p>
+            <p><a href="https://shorturl.at/XnvFl">Store Location</a></p>
+            <p><a href="privacy.html">Privacy Policy</a></p>
+            <p><a href="term.html">Terms & Condition</a></p>
+            <h4>Application Menu: </h4>
+            <div class="section" onclick="toggleSection('mainLinks', this)">
+                <div class="arrow">▶</div>
+                <span>How To: </span>
+            </div>
+            <div id="mainLinks" class="links">
+                <a href="how_to_order.html">Order</a>
+                <a href="how_to_login.html">Login</a>
+                <a href="how_to_signup.html">Signup</a>
+            </div>
+            <div class="section" onclick="toggleSection('hotLinks', this)">
+                <div class="arrow">▶</div>
+                <span>Queries</span>
+            </div>
+            <div id="hotLinks" class="links">
+                <a href="app_is_safe.html">App Is Safe</a>
+                <a href="copyright.html">Copyright</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="cartContainer">
+    <h2>Shopping Cart</h2>
+    <ul id="cartItems"></ul>
+    <button id="nextButton" onclick="goToCartPage()">Next</button>
+    <button onclick="closeCart()" class="close-btnb">Close</button>
+</div>
+<div class="gif-container"></div>
+<div class="books-labels">
+    <h2>Trending Products</h2>
+    <p>These Products Are Most Ordered On Last Month</p>
+</div>
+<div id="books"></div>
+<div class="gif-body">
+    <img src="https://i.ibb.co/NNJ7KCT/note-copy.png" onclick="window.location.href='copy.html';" style="cursor: pointer;">
+    <img src="https://i.ibb.co/zJFSy24/anim4.gif">
+    <img src="https://i.ibb.co/HN4fs1H/anim5.gif">
+</div>
+<div id="loading" style="display:none;">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+</div>
+<div class="books-labels">
+    <h2>Feature Products</h2>
+    <p>These Products Are Featured By Old Customers.</p>
+</div>
+<div id="copys"></div>
+<div id="disco"></div>
+<script src="script.js"></script>
+<script src="show_books.js"></script>
+<script src="show_copys.js"></script>
+<script src="show_disco.js"></script>
+<script src="main.js"></script>

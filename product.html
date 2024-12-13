@@ -1,0 +1,139 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="style.css">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+    *{
+        padding: 0;
+        margin: 0;
+    }
+    .header{ display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #000; }
+    body{
+        overflow-x: hidden;
+        font-family: "Open Sans", sans-serif;
+    }
+    #additionalImages{
+        width: 50px;
+    }
+    #productImage{
+        width: 220px;
+        height: 260px;
+    }
+    .additional-image {
+        width: 220px;
+        height: 260px;
+        margin: 5px;
+    }
+    .product-box{
+        margin-left: 7%;
+        display: flex;
+        align-items: center;
+        margin-top: 10%;
+        width: 81%;
+        overflow-x: scroll;
+    }
+    #additionalImages{
+        display: flex;
+    }
+    #productName{
+        font-weight: 400;
+        margin-top: 20px;
+    }
+    #productName , #productPrice , #productDescription{
+        margin-left: 10px;
+    }
+    .header{
+        border-bottom: 1px solid;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .body-off h2{
+        font-size: 20px;
+        font-weight: 400;
+    }
+    .body-off{
+        margin-top: 10px;
+        margin-left: 10px;
+    }
+    .add-btn{ padding: 10px 26px; color: #fff; background: #000; cursor: pointer; margin: 10px; }
+    #alertBox {
+        display: none;
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #000;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        z-index: 1000;
+    }
+</style>
+<div class="header">
+    <img src="https://i.ibb.co/qpJWqnp/icon.png">
+</div>
+<div id="alertBox"></div>
+<div id="productDetails">
+    <div>
+    <div class="product-box">
+        <img id="productImage" src="" alt="Product Image" class="product-image">
+        <div id="additionalImages" class="product-image"></div>
+    </div>
+    <h2 id="productName"></h2>
+    <p id="productPrice"></p>
+    <p id="productDescription"></p>
+    <button onclick="addToCart()" class="add-btn">Add to Cart</button>
+</div>
+
+<script>
+    const sdsUsername = localStorage.getItem('sdsUsername');
+    
+    if (!sdsUsername) {
+        showAlert('Please Login First');
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 5000);
+    } else {
+        const product = JSON.parse(localStorage.getItem('currentProduct'));
+
+        document.getElementById('productImage').src = product.imageUrl;
+        document.getElementById('productName').textContent = product.name;
+        document.getElementById('productPrice').textContent = 'Price: ₹' + product.price;
+        document.getElementById('productDescription').textContent = product.description;
+
+        const additionalImagesContainer = document.getElementById('additionalImages');
+        product.additionalImages.forEach(imgUrl => {
+            if (imgUrl) {
+                const img = document.createElement('img');
+                img.src = imgUrl;
+                img.className = 'additional-image';
+                additionalImagesContainer.appendChild(img);
+            }
+        });
+    }
+
+    function showAlert(message) {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.textContent = message;
+        alertBox.style.display = 'block';
+        setTimeout(() => {
+            alertBox.style.display = 'none';
+        }, 5000);
+    }
+
+    function addToCart() {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const product = JSON.parse(localStorage.getItem('currentProduct'));
+        const existingItem = cart.find(item => item.name === product.name);
+
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({ name: product.name, price: product.price, quantity: 1 , imageUrl: product.imageUrl});
+        }
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+        showAlert('Item added to cart');
+    }
+</script>

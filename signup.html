@@ -1,0 +1,68 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap');
+    *{ margin: 0; padding: 0; overflow-x: hidden; }
+    body{ font-family: "Rat Hat Display", sans-serif; }
+    .header{ display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #000; }
+    form{ padding: 15px; border: 1px solid #e1e1e1; margin: 10px; }
+    input{ width: 100%; padding: 9px 16px; background: #fff; border: 1px solid #e1e1e1; min-height: 42px; font-size: 15px; line-height: 22px; margin-bottom: 10px; color: #444; }
+    label{ color: #1a1a1a; }
+    button{ padding: 10px 26px; color: #fff; background: #000; cursor: pointer; }
+    .int-p{ display: flex; align-items: center; font-size: 20px; }
+    .show-pass{ width: 20px; margin-right: 10px; }
+    h2{ font-weight: 500; margin: 10px; }
+    input:disabled { background: #e1e1e1; }
+    #detailsForm { display: none; }
+    textarea{ width: 100%; padding: 9px 16px; background: #fff; border: 1px solid #e1e1e1; min-height: 42px; font-size: 15px; line-height: 22px; margin-bottom: 10px; color: #444; resize: none; }
+</style>
+<div class="header">
+    <img src="https://i.ibb.co/qpJWqnp/icon.png">
+</div>
+<div id="signupForm">
+    <h2>Signup</h2>
+    <form>
+        <label>Email: </label>
+        <input type="email" id="email" required class="log-int"><br>
+        <label>Username: </label>
+        <input type="text" id="username" required class="log-int"><br>
+        <label>Password: </label>
+        <input type="password" id="password" required class="log-int">
+        <p class="int-p"><input type="checkbox" onclick="showPassword()" class="show-pass"> Show Password</p><br>
+        <button type="button" onclick="validateEmail()" class="log-btn">Get OTP</button>
+    </form>
+    <div id="message" class="message"></div>
+</div>
+
+<div id="otpForm" style="display:none;">
+    <h2>Enter OTP</h2>
+    <form>
+        <p>Enter OTP: </p>
+        <input type="text" id="otp" required class="log-int"><br>
+        <button type="button" onclick="verifyOTP()" class="log-btn">Next Page</button>
+    </form>
+    <div id="otpMessage" class="message"></div>
+</div>
+
+<div id="detailsForm">
+    <h2>Additional Details</h2>
+    <form>
+        <label>Name:</label>
+        <input type="text" id="name" required class="log-int"><br>
+        <label>Mobile: </label>
+        <input type="text" id="mobile" required class="log-int"><br>
+        <label>Pin code: </label>
+        <input type="text" id="pincode"  required class="log-int"><br>
+        <label>State: </label>
+        <input type="text" id="state" required disabled class="log-int"><br>
+        <label>City: </label>
+        <input type="text" id="city" required disabled class="log-int"><br>
+        <label>Address: </label>
+        <textarea id="address" required class="log-int"></textarea><br>
+        <button type="button" onclick="submitDetails()" class="log-btn">Submit</button>
+    </form>
+    <div id="detailsMessage" class="message"></div>
+</div>
+
+<script src="signup.js"></script>
