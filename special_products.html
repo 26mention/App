@@ -11,41 +11,30 @@
     .product-details { display: flex; flex-direction: column; align-items: center; }
     .product-details img{ width: 260px; height: 260px; }
     .product-details h2{ text-transform: uppercase; font-size: 24px; font-weight: 500; }
-    .button-group{ display: flex; justify-content: center; }
+    .button-group{ display: flex; justify-content: center; margin: 0px 25px 15px 25px; }
     #recommended-posts-list{ display: flex; align-items: center; overflow-x: hidden; white-space: nowrap; justify-content: center; width: 95%; padding: 10px; }
     .recommended-post{ display: flex; flex-direction: column-reverse; margin: 2px; width: 78%; justify-content: center; padding: 10px; background: #808080; align-items: center;}
-    .price-make{ display: flex; justify-content: center; font-weight: bolder; font-size: 20px; margin: 10px 0px 0px 0px; }
+    .price-make{ display: flex; justify-content: center; font-weight: 500; font-size: 24px; margin: 10px 0px 10px 0px; }
     .columnb{ border-radius: 25px; padding: 10px; width: 50px; height: 50px; font-size: 14px; background: #fff; color: #000; border: 1px solid #000; }
     #button-columnB:focus{ background: #000; color: #fff; }
     #button-columnC:focus{ background: #000; color: #fff; }
     #button-columnD:focus{ background: #000; color: #fff; }
     #button-columnE:focus{ background: #000; color: #fff; }
-    .btn-b{ padding: 6px 14px; margin: 10px 10px 0px 0px; color: #000; background: #fff; border: 1px solid #000; }
-    .button-group button:focus{ background: #000; color: #fff; }
+    .btn-b{ padding: 6px 14px; margin: 10px 10px 0px 0px; color: #000; background: #fff; border: 1px solid #000; display: flex; align-items: center; justify-content: center; }
     .recommended-posts h2{ margin: 8px; }
     .price-make p{ margin-left: 5px; }
     .add-boz{ display: flex; justify-content: center; }
     .add-boz button{ padding: 10px 26px; color: #fff; background: #000; cursor: pointer; }
     .selected{ background: #000; color: #fff; }
+    .back-btn{ margin: 0px 10px 10px 10px; }
 </style>
 <div class="header">
     <img src="https://i.ibb.co/qpJWqnp/icon.png">
 </div>
 <div class="product-details" id="product-details"></div>
-<div class="button-group">
-  <button id="ruled-button" onclick="handleButtonClick('Ruled')" class="btn-b">Ruled</button>
-  <button id="unruled-button" onclick="handleButtonClick('Unruled')" class="btn-b" >Unruled</button>
-</div>
+<div class="button-group" id="button-group"></div>
 <div id="price-details">
-  <div class="price-make">
-  <del><p id="rest-price"></p></del>
-  <p id="cut-price"></p>
-  </div>
   <div class="add-boz">
 <button id="add-to-cart-button" onclick="addToCart()">Add to Cart</button>
-</div>
-<div class="recommended-posts">
-  <h2>Similar Copy: </h2>
-  <div id="recommended-posts-list"></div>
 </div>
 <script src="special_products.js"></script> 
