@@ -108,6 +108,16 @@ function checkAddToCartButton() {
 }
 
 function addToCart() {
+  const sdsUsername = localStorage.getItem('sdsUsername');
+
+  if (!sdsUsername) {
+    showAlert('Please log in to add items to the cart.');
+    setTimeout(() => {
+      window.open('login.html', '_blank');
+    }, 5000);
+    return;
+  }
+
   if (!selectedType) {
     showAlert('Please Select Subject.');
     return;
