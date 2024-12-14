@@ -1,7 +1,8 @@
 const productDetailsDiv = document.getElementById('product-details');
 const recommendedPostsListDiv = document.getElementById('recommended-posts-list');
 const addToCartButton = document.getElementById('add-to-cart-button');
-const DEPLOYED_URL = 'https://script.google.com/macros/s/AKfycbxr5U9q-YRiiahqfCgU7YnfBdH4AHJrWHOlNBUEIMbJOZMt7l-5T6fPEEJmm8YGLPYILQ/exec';
+const buttonGroupDiv = document.querySelector('.button-group');
+const DEPLOYED_URL = 'https://script.google.com/macros/s/AKfycbyGgzMgl-ldRG7OihFoKkshEVJ9dG06GqXj2PmnX1xBGfJiUYZwwi8SkAX0sTa88F1EKQ/exec';
 
 let selectedType = '';
 let priceDetailsShown = false;
@@ -41,34 +42,39 @@ function showAlert(message) {
   }, 5000);
 }
 
-productDetailsDiv.innerHTML = `    
+productDetailsDiv.innerHTML = `
   <h2>${productData.title}</h2>
   <img src="${productData.image}">
+  <div class="price-make">
+  <del><p id="rest-price"></p></del>
+  <p id="cut-price"></p>
+  </div>
   <div class="back-btn">
-  ${productData.columnB && productData.columnB.split(',')[0] ? `<button id="button-columnB" onclick="showPriceDetails('${productData.columnB.split(',')[1]}', '${productData.columnB.split(',')[2]}', 'columnB')" class="columnb">${productData.columnB.split(',')[0]}</button>` : ''}
-  ${productData.columnC && productData.columnC.split(',')[0] ? `<button id="button-columnC" onclick="showPriceDetails('${productData.columnC.split(',')[1]}', '${productData.columnC.split(',')[2]}', 'columnC')" class="columnb">${productData.columnC.split(',')[0]}</button>` : ''}
-  ${productData.columnD && productData.columnD.split(',')[0] ? `<button id="button-columnD" onclick="showPriceDetails('${productData.columnD.split(',')[1]}', '${productData.columnD.split(',')[2]}', 'columnD')" class="columnb">${productData.columnD.split(',')[0]}</button>` : ''}
-  ${productData.columnE && productData.columnE.split(',')[0] ? `<button id="button-columnE" onclick="showPriceDetails('${productData.columnE.split(',')[1]}', '${productData.columnE.split(',')[2]}', 'columnE')" class="columnb">${productData.columnE.split(',')[0]}</button>` : ''}
+    ${productData.columnB && productData.columnB.split(',')[0] ? `<button id="button-columnB" onclick="showPriceDetails('${productData.columnB.split(',')[1]}', '${productData.columnB.split(',')[2]}', 'columnB')" class="columnb">${productData.columnB.split(',')[0]}</button>` : ''}
+    ${productData.columnC && productData.columnC.split(',')[0] ? `<button id="button-columnC" onclick="showPriceDetails('${productData.columnC.split(',')[1]}', '${productData.columnC.split(',')[2]}', 'columnC')" class="columnb">${productData.columnC.split(',')[0]}</button>` : ''}
+    ${productData.columnD && productData.columnD.split(',')[0] ? `<button id="button-columnD" onclick="showPriceDetails('${productData.columnD.split(',')[1]}', '${productData.columnD.split(',')[2]}', 'columnD')" class="columnb">${productData.columnD.split(',')[0]}</button>` : ''}
+    ${productData.columnE && productData.columnE.split(',')[0] ? `<button id="button-columnE" onclick="showPriceDetails('${productData.columnE.split(',')[1]}', '${productData.columnE.split(',')[2]}', 'columnE')" class="columnb">${productData.columnE.split(',')[0]}</button>` : ''}
   </div>
 `;
 
 fetch(DEPLOYED_URL, {
   method: 'POST',
-  body: new URLSearchParams({ action: 'fetchRecommendedPosts' }),
+  body: new URLSearchParams({ action: 'fetchSpecialProducts' }),
 })
   .then(response => response.json())
   .then(data => {
-    data.slice(0, 3).forEach(post => {
-      const recommendedPostDiv = document.createElement('div');
-      recommendedPostDiv.className = 'recommended-post';
-      recommendedPostDiv.innerHTML = `
-        <p>${post.title}</p>
-        <img src="${post.image}" width="120" height="120">
-      `;
-      recommendedPostsListDiv.appendChild(recommendedPostDiv);
+    const product = data.find(p => p.title === productData.title);
+    const buttonGroupLabels = product.buttonGroups.split(',');
+    buttonGroupDiv.innerHTML = '';
+    buttonGroupLabels.forEach(label => {
+      const button = document.createElement('button');
+      button.className = 'btn-b';
+      button.textContent = label;
+      button.onclick = () => handleButtonClick(label);
+      buttonGroupDiv.appendChild(button);
     });
   })
-  .catch(error => console.error('Error fetching recommended posts:', error));
+  .catch(error => console.error('Error fetching product data:', error));
 
 function showPriceDetails(restPrice, cutPrice, buttonId) {
   const priceDetailsDiv = document.getElementById('price-details');
@@ -77,25 +83,20 @@ function showPriceDetails(restPrice, cutPrice, buttonId) {
   document.getElementById('cut-price').innerText = `Price: ${cutPrice}`;
   priceDetailsShown = true;
   checkAddToCartButton();
-
   resetButtonSelection();
   document.getElementById(`button-${buttonId}`).classList.add('selected');
 }
 
 function handleButtonClick(type) {
   selectedType = type;
-
-  const ruledButton = document.getElementById('ruled-button');
-  const unruledButton = document.getElementById('unruled-button');
-
-  if (type === 'Ruled') {
-    ruledButton.classList.add('selected');
-    unruledButton.classList.remove('selected');
-  } else {
-    unruledButton.classList.add('selected');
-    ruledButton.classList.remove('selected');
-  }
-
+  const buttons = document.querySelectorAll('.btn-b');
+  buttons.forEach(button => {
+    if (button.textContent === type) {
+      button.classList.add('selected');
+    } else {
+      button.classList.remove('selected');
+    }
+  });
   checkAddToCartButton();
 }
 
@@ -109,7 +110,6 @@ function checkAddToCartButton() {
 
 function addToCart() {
   const sdsUsername = localStorage.getItem('sdsUsername');
-
   if (!sdsUsername) {
     showAlert('Please log in to add items to the cart.');
     setTimeout(() => {
@@ -117,28 +117,23 @@ function addToCart() {
     }, 5000);
     return;
   }
-
   if (!selectedType) {
     showAlert('Please Select Subject.');
     return;
   }
-
   const cartItem = {
     name: `${productData.title} (${selectedType})`,
     price: document.getElementById('cut-price').innerText.split(': ')[1],
     quantity: 1,
     imageUrl: productData.image,
   };
-
   let cart = JSON.parse(localStorage.getItem('cart')) || [];
   const existingItemIndex = cart.findIndex(item => item.name === cartItem.name);
-
   if (existingItemIndex !== -1) {
     cart[existingItemIndex].quantity += 1;
   } else {
     cart.push(cartItem);
   }
-
   localStorage.setItem('cart', JSON.stringify(cart));
   showAlert(`${cartItem.name} has been added to the cart!`);
 }
