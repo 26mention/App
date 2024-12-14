@@ -113,7 +113,7 @@ function addToCart() {
   if (!sdsUsername) {
     showAlert('Please log in to add items to the cart.');
     setTimeout(() => {
-      window.open('login.html', '_blank');
+      window.location.href = 'login.html';
     }, 5000);
     return;
   }
