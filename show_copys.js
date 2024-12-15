@@ -24,19 +24,19 @@ async function fetchProducts() {
                         <div class="product-mrp">MRP: ₹${product.mrp}</div>
                     </div>
                 <div class="navigation">
-                    <button id="prev-btn" ${index === 0 ? 'disabled' : ''}><span class="material-symbols-outlined">arrow_back_ios</span></button>
-                    <button id="next-btn" ${index === products.length - 1 ? 'disabled' : ''}><span class="material-symbols-outlined">arrow_forward_ios</span></button>
+                    <button id="prevm-btn" ${index === 0 ? 'disabled' : ''}><span class="material-symbols-outlined">arrow_back_ios</span></button>
+                    <button id="nextm-btn" ${index === products.length - 1 ? 'disabled' : ''}><span class="material-symbols-outlined">arrow_forward_ios</span></button>
                 </div>
             `;
 
-            document.getElementById('prev-btn').addEventListener('click', () => {
+            document.getElementById('prevm-btn').addEventListener('click', () => {
                 if (currentIndex > 0) {
                     currentIndex -= 1;
                     renderProduct(currentIndex);
                 }
             });
 
-            document.getElementById('next-btn').addEventListener('click', () => {
+            document.getElementById('nextm-btn').addEventListener('click', () => {
                 if (currentIndex < products.length - 1) {
                     currentIndex += 1;
                     renderProduct(currentIndex);
